@@ -1,12 +1,14 @@
 # first of all import the socket library
 import socket               
 
+# Constant
+MAX_SUBMIT_SIZE = 2048 + 50 #50 byte for header data
+port = 12345
+
 # next create a socket object
 s = socket.socket()         
 print ("Server successfully created")
 
-
-port = 12345               
  
 s.bind(('', port))
 print ("socket binded to %s" %(port))
@@ -22,7 +24,7 @@ while True:
 
 	# send a thank you message to the client. 
 	c, addr = s.accept()
-	command = eval(c.recv(1024).decode("utf-8"))
+	command = eval(c.recv(MAX_SUBMIT_SIZE).decode("utf-8"))
 	print ('Recived : '+ str(addr)+" --> "+str(command[0]))
 	if command[0] == 'register':
 		c.send(b"xaDad1")

@@ -46,7 +46,8 @@ class Client:
 		file = open(filename, 'r') 
 		solution = file.read()
 		file.close()
-		self.server.sendall(json.dumps(["submit", email, password, problem_no, solution]).encode())
+		lang = filename.split('.')[-1]
+		self.server.sendall(json.dumps(["submit", email, password, problem_no, solution, lang]).encode())
 		print(self.server.recv(1024).decode("utf-8"))
 	def status(self, email, password):
 		self.server.sendall(json.dumps(["status", email, password]).encode())
@@ -58,11 +59,12 @@ if len(sys.argv) <=1:
 if sys.argv[1] == 'help':
 	print("------------------------------------------------------")
 	print("codathon register email name roll   [return password]")
-	print("codathon submit email password problem_no solution_file //TODO: lang")
+	print("codathon submit email password problem_no solution_file ")
 	print("codathon login user password")
 	print("codathon get [return all problem]")
 	print("codathon status email password [return your status]")
-	print("codathon help")
+	print("------------------------------------------------------")
+	print("solution_file must have extansion .py, .c, .cpp or .java")
 	print("------------------------------------------------------")
 elif sys.argv[1] == 'register':
 	if len(sys.argv) != 5:
