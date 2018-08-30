@@ -53,16 +53,28 @@ class Client:
 		self.server.sendall(json.dumps(["status", email, password]).encode())
 		print(self.server.recv(1024).decode("utf-8"))
 
+	def compile(self, ques, filename):
+		file = open(filename, 'r') 
+		solution = file.read()
+		file.close()
+		lang = filename.split('.')[-1]
+		self.server.sendall(json.dumps(["compile", ques, lang, solution]).encode())
+		response = self.server.recv(1024)
+		print(response.decode("utf-8"))
 if len(sys.argv) <=1:
 	exit()
 
 if sys.argv[1] == 'help':
+	print("------------------------------------------------------")
+	print("---------------Codathon 2018--------------------------")
+	print("--------------Command Helper--------------------------")
 	print("------------------------------------------------------")
 	print("codathon register email name roll   [return password]")
 	print("codathon submit email password problem_no solution_file ")
 	print("codathon login user password")
 	print("codathon get [return all problem]")
 	print("codathon status email password [return your status]")
+	print("codathon compile problem_no solution_file [return matched test case]")
 	print("------------------------------------------------------")
 	print("solution_file must have extansion .py, .c, .cpp or .java")
 	print("------------------------------------------------------")
@@ -100,3 +112,11 @@ elif sys.argv[1] == 'status':
 		exit()
 	c = Client("127.0.0.1", 12345)
 	c.status(sys.argv[2], sys.argv[3])
+
+
+elif sys.argv[1] == 'compile':
+	if len(sys.argv) != 4:
+		print('Wrong Command type "codathon.py help" to get help.')
+		exit()
+	c = Client("127.0.0.1", 12345)
+	c.compile(sys.argv[2], sys.argv[3])
