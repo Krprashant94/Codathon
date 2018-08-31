@@ -63,108 +63,122 @@ class Compiler:
 			return self.__compile_python(filename, problam_num)
 
 	def __compile_c(self, filename, problam_num):
-		compile_error = os.system('gcc "'+ filename + '" -o "'+ filename +'.exe"')
-		if compile_error == 1:
-			self.compile_error = True
-			self.error_text = "Unable to compile"
-			return
+		try:
+			compile_error = os.system('gcc "'+ filename + '" -o "'+ filename.split(".")[0] +'"')
+			if compile_error == 1:
+				self.compile_error = True
+				self.error_text = "Unable to compile"
+				return
+			
+			# Run 
+			h1 = open('problam/'+str(problam_num)+'/input', 'r')
+			h2 = open('problam/'+str(problam_num)+'/output', 'r')
+
+			inputs = h1.read()
+			outputs = h2.read()
+			h1.close()
+			h2.close()
+
+			p = Popen('"'+ filename.split(".")[0] +'.exe"', stdin=PIPE, stdout=PIPE, stderr=PIPE)
+			stdout_data = p.communicate(input=inputs.encode())[0]
+
+			a = outputs.split('\n')
+			b = stdout_data.decode('utf-8').strip().split('\r\n')
+
+			allCount = len(a)
+			matchCount = [i == j for i, j in zip(a, b)].count(True)
+
+			return (matchCount/allCount)*100
+		except Exception as e:
+			return 0
+
 		
-		# Run 
-		h1 = open('problam/'+str(problam_num)+'/input', 'r')
-		h2 = open('problam/'+str(problam_num)+'/output', 'r')
-
-		inputs = h1.read()
-		outputs = h2.read()
-		h1.close()
-		h2.close()
-
-		p = Popen('"'+ filename +'.exe"', stdin=PIPE, stdout=PIPE, stderr=PIPE)
-		stdout_data = p.communicate(input=inputs.encode())[0]
-
-		a = outputs.split('\n')
-		b = stdout_data.decode('utf-8').strip().split('\r\n')
-
-		allCount = len(a)
-		matchCount = [i == j for i, j in zip(a, b)].count(True)
-
-		return (matchCount/allCount)*100
-
 	def __compile_cpp(self, filename, problam_num):
-		compile_error = os.system('g++ "'+ filename + ' -o "'+ filename +'.exe"')
-		if compile_error == 1:
-			self.compile_error = True
-			self.error_text = "Unable to compile"
-			return
-		
-		# Run 
-		h1 = open('problam/'+str(problam_num)+'/input', 'r')
-		h2 = open('problam/'+str(problam_num)+'/output', 'r')
+		try:
+			compile_error = os.system('g++ "'+ filename + '" -o "'+ filename.split(".")[0] +'"')
+			if compile_error == 1:
+				self.compile_error = True
+				self.error_text = "Unable to compile"
+				return
+			
+			# Run 
+			h1 = open('problam/'+str(problam_num)+'/input', 'r')
+			h2 = open('problam/'+str(problam_num)+'/output', 'r')
 
-		inputs = h1.read()
-		outputs = h2.read()
-		h1.close()
-		h2.close()
+			inputs = h1.read()
+			outputs = h2.read()
+			h1.close()
+			h2.close()
 
-		p = Popen('"'+filename+'.exe"', stdin=PIPE, stdout=PIPE, stderr=PIPE)
-		stdout_data = p.communicate(input=inputs.encode())[0]
+			p = Popen('"'+filename.split(".")[0]+'.exe"', stdin=PIPE, stdout=PIPE, stderr=PIPE)
+			stdout_data = p.communicate(input=inputs.encode())[0]
 
-		a = outputs.split('\n')
-		b = stdout_data.decode('utf-8').strip().split('\r\n')
+			a = outputs.split('\n')
+			b = stdout_data.decode('utf-8').strip().split('\r\n')
 
-		allCount = len(a)
-		matchCount = [i == j for i, j in zip(a, b)].count(True)
+			allCount = len(a)
+			matchCount = [i == j for i, j in zip(a, b)].count(True)
 
-		return (matchCount/allCount)*100
+			return (matchCount/allCount)*100
+
+		except Exception as e:
+			return 0
 
 
 	def __compile_java(self, filename, problam_num):
-		compile_error = os.system('javac "'+ filename+'"')
-		if compile_error == 1:
-			self.compile_error = True
-			self.error_text = "Unable to compile"
-			return
-		
-		# Run 
-		h1 = open('problam/'+str(problam_num)+'/input', 'r')
-		h2 = open('problam/'+str(problam_num)+'/output', 'r')
+		try:
+			compile_error = os.system('javac "'+ filename+'"')
+			if compile_error == 1:
+				self.compile_error = True
+				self.error_text = "Unable to compile"
+				return
+			
+			# Run 
+			h1 = open('problam/'+str(problam_num)+'/input', 'r')
+			h2 = open('problam/'+str(problam_num)+'/output', 'r')
 
-		inputs = h1.read()
-		outputs = h2.read()
-		h1.close()
-		h2.close()
+			inputs = h1.read()
+			outputs = h2.read()
+			h1.close()
+			h2.close()
 
-		print('java "'+filename[0:-5]+'"')
-		p = Popen('java "'+filename[0:-5]+'"', stdin=PIPE, stdout=PIPE, stderr=PIPE)
-		stdout_data = p.communicate(input=inputs.encode())[0]
-		a = outputs.split('\n')
-		b = stdout_data.decode('utf-8').strip().split('\n')
-		print(b)
-		allCount = len(a)
-		matchCount = [i == j for i, j in zip(a, b)].count(True)
+			p = Popen('java "'+filename.split(".")[0]+'"', stdin=PIPE, stdout=PIPE, stderr=PIPE)
+			stdout_data = p.communicate(input=inputs.encode())[0]
+			a = outputs.split('\n')
+			b = stdout_data.decode('utf-8').strip().split('\n')
+			print(b)
+			allCount = len(a)
+			matchCount = [i == j for i, j in zip(a, b)].count(True)
 
-		return (matchCount/allCount)*100
+			return (matchCount/allCount)*100
+
+		except Exception as e:
+			return 0
 
 
 	def __compile_python(self, filename, problam_num):		
-		# Run 
-		h1 = open('problam/'+str(problam_num)+'/input', 'r')
-		h2 = open('problam/'+str(problam_num)+'/output', 'r')
+		try:
+			h1 = open('problam/'+str(problam_num)+'/input', 'r')
+			h2 = open('problam/'+str(problam_num)+'/output', 'r')
 
-		inputs = h1.read()
-		outputs = h2.read()
-		h1.close()
-		h2.close()
+			inputs = h1.read()
+			outputs = h2.read()
+			h1.close()
+			h2.close()
 
-		p = Popen('python "'+filename+'"', stdin=PIPE, stdout=PIPE, stderr=PIPE)
-		stdout_data = p.communicate(input=inputs.encode())[0]
+			p = Popen('python "'+filename+'"', stdin=PIPE, stdout=PIPE, stderr=PIPE)
+			stdout_data = p.communicate(input=inputs.encode())[0]
 
-		a = outputs.split('\n')
-		b = stdout_data.decode('utf-8').strip().split('\r\n')
+			a = outputs.split('\n')
+			b = stdout_data.decode('utf-8').strip().split('\r\n')
 
-		allCount = len(a)
-		matchCount = [i == j for i, j in zip(a, b)].count(True)
+			allCount = len(a)
+			matchCount = [i == j for i, j in zip(a, b)].count(True)
 
-		return (matchCount/allCount)*100
+			return (matchCount/allCount)*100
+
+		except Exception as e:
+		 	return 0
 
 
 	def getLastError(self):
@@ -223,9 +237,12 @@ while True:
 				h.close()
 				lang_comp = Compiler(command[5])
 				score = lang_comp.compile(file_path+'/'+command[6], command[3])
-				print(score)
-				# lastError = compiler.getLastError()
-				c.sendall(score.encode())
+
+				lastError = lang_comp.getLastError()
+				if lastError == False:
+					c.sendall(str(score).encode())
+				else:
+					c.sendall(str(score).encode())
 
 			elif command[0] == 'status':
 				c.sendall(b'Rank : 1358\nScore : 1350\nTime Left : 3 hr 30min 10s')

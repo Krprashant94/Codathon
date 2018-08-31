@@ -49,6 +49,7 @@ class Client:
 		lang = filename.split('.')[-1]
 		self.server.sendall(json.dumps(["submit", email, password, problem_no, solution, lang, filename]).encode())
 		print(self.server.recv(1024).decode("utf-8"))
+		
 	def status(self, email, password):
 		self.server.sendall(json.dumps(["status", email, password]).encode())
 		print(self.server.recv(1024).decode("utf-8"))
