@@ -76,6 +76,7 @@ public class CodeExecutor extends Thread {
 		//System.out.println("Executed in "+exeTime);
 	}
 	public void runC()throws Exception{
+		System.out.println(programName);
 		long t1=System.currentTimeMillis();
 		p=rt.exec(programName);
 		BufferedWriter bw=new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));

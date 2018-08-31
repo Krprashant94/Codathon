@@ -39,30 +39,144 @@ class Database:
 				print(self.column[i]+" = "+ row[i])
 
 
+import subprocess
 
+from subprocess import Popen, PIPE, STDOUT
 
 class Compiler:
 	# ""docstring for compiler""
 	def __init__(self, lang):
 		self.language = lang
 
-		self.error = False
+		self.compile_error = False
 		self.error_text = "None"
 		self.compile_percentage = 0
 
-	def compile(self, filename):
-		if self.language == "c" or self.language == "C":
-			self.__compile_c(filename)
-	def __compile_c(self, filename):
-		compile_error = os.system("gcc "+filename+ ' -o "'+filename+'.exe"')
-		print(compile_error)
+	def compile(self, filename, problam_num):
+		if self.language == "c":
+			return self.__compile_c(filename, problam_num)
+		elif self.language == "cpp":
+			return self.__compile_cpp(filename, problam_num)
+		elif self.language == "java":
+			return self.__compile_java(filename, problam_num)
+		elif self.language == "py":
+			return self.__compile_python(filename, problam_num)
+
+	def __compile_c(self, filename, problam_num):
+		compile_error = os.system("gcc "+ filename + ' -o "'+ filename[0:-1] +'.exe"')
+		if compile_error == 1:
+			self.compile_error = True
+			self.error_text = "Unable to compile"
+			return
+		
+		# Run 
+		h1 = open('problam/'+str(problam_num)+'/input', 'r')
+		h2 = open('problam/'+str(problam_num)+'/output', 'r')
+
+		inputs = h1.read()
+		outputs = h2.read()
+		h1.close()
+		h2.close()
+
+		p = Popen(filename[0:-1]+'.exe"', stdin=PIPE, stdout=PIPE, stderr=PIPE)
+		stdout_data = p.communicate(input=inputs.encode())[0]
+
+		a = outputs.split('\n')
+		b = stdout_data.decode('utf-8').strip().split('\r\n')
+
+		allCount = len(a)
+		matchCount = [i == j for i, j in zip(a, b)].count(True)
+
+		return (matchCount/allCount)*100
+
+	def __compile_cpp(self, filename, problam_num):
+		compile_error = os.system("g++ "+ filename + ' -o "'+ filename[0:-1] +'.exe"')
+		if compile_error == 1:
+			self.compile_error = True
+			self.error_text = "Unable to compile"
+			return
+		
+		# Run 
+		h1 = open('problam/'+str(problam_num)+'/input', 'r')
+		h2 = open('problam/'+str(problam_num)+'/output', 'r')
+
+		inputs = h1.read()
+		outputs = h2.read()
+		h1.close()
+		h2.close()
+
+		p = Popen(filename[0:-1]+'.exe"', stdin=PIPE, stdout=PIPE, stderr=PIPE)
+		stdout_data = p.communicate(input=inputs.encode())[0]
+
+		a = outputs.split('\n')
+		b = stdout_data.decode('utf-8').strip().split('\r\n')
+
+		allCount = len(a)
+		matchCount = [i == j for i, j in zip(a, b)].count(True)
+
+		return (matchCount/allCount)*100
+
+
+	def __compile_java(self, filename, problam_num):
+		compile_error = os.system("javac "+ filename + ' -o "'+ filename[0:-1] +'.exe"')
+		if compile_error == 1:
+			self.compile_error = True
+			self.error_text = "Unable to compile"
+			return
+		
+		# Run 
+		h1 = open('problam/'+str(problam_num)+'/input', 'r')
+		h2 = open('problam/'+str(problam_num)+'/output', 'r')
+
+		inputs = h1.read()
+		outputs = h2.read()
+		h1.close()
+		h2.close()
+
+		p = Popen(filename[0:-1]+'.exe"', stdin=PIPE, stdout=PIPE, stderr=PIPE)
+		stdout_data = p.communicate(input=inputs.encode())[0]
+
+		a = outputs.split('\n')
+		b = stdout_data.decode('utf-8').strip().split('\r\n')
+
+		allCount = len(a)
+		matchCount = [i == j for i, j in zip(a, b)].count(True)
+
+		return (matchCount/allCount)*100
+
+
+	def __compile_python(self, filename, problam_num):		
+		# Run 
+		h1 = open('problam/'+str(problam_num)+'/input', 'r')
+		h2 = open('problam/'+str(problam_num)+'/output', 'r')
+
+		inputs = h1.read()
+		outputs = h2.read()
+		h1.close()
+		h2.close()
+
+		print(filename)
+		stdout_data= str(os.system(filename)).encode()
+		# p = Popen(filename, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+		# stdout_data = p.communicate(input=inputs.encode())[0]
+
+		a = outputs.split('\n')
+		b = stdout_data.decode('utf-8').strip().split('\r\n')
+
+		allCount = len(a)
+		matchCount = [i == j for i, j in zip(a, b)].count(True)
+
+		return (matchCount/allCount)*100
 
 
 	def getLastError(self):
-		return self.error_text
+		if self.compile_error:
+			return self.error_text
+		else:
+			return False
 
-c = Compiler('c')
-c.compile('"user/a@a/1/abc.c"')
+c = Compiler('py')
+c.compile('"user/a@a/2/abc.py"', 1)
 exit()
 d = Database()
 d.updateScore('kr.prashsant94@gmail.com', '1', '35.5', '35105')
