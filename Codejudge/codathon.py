@@ -47,13 +47,14 @@ class Client:
 		solution = file.read()
 		file.close()
 		lang = filename.split('.')[-1]
-		self.server.sendall(json.dumps(["submit", email, password, problem_no, solution, lang]).encode())
+		self.server.sendall(json.dumps(["submit", email, password, problem_no, solution, lang, filename]).encode())
 		print(self.server.recv(1024).decode("utf-8"))
 	def status(self, email, password):
 		self.server.sendall(json.dumps(["status", email, password]).encode())
 		print(self.server.recv(1024).decode("utf-8"))
 
 	def compile(self, ques, filename):
+		"""Not in use"""
 		file = open(filename, 'r') 
 		solution = file.read()
 		file.close()
@@ -61,6 +62,10 @@ class Client:
 		self.server.sendall(json.dumps(["compile", ques, lang, solution]).encode())
 		response = self.server.recv(1024)
 		print(response.decode("utf-8"))
+
+	def reset(self):
+		self.server.sendall(json.dumps(["reset"]).encode())
+
 if len(sys.argv) <=1:
 	exit()
 
@@ -74,9 +79,11 @@ if sys.argv[1] == 'help':
 	print("codathon login user password")
 	print("codathon get [return all problem] or localhost:"+str(PORT)+" in browser")
 	print("codathon status email password [return your status]")
-	print("codathon compile problem_no solution_file [return matched test case]")
 	print("------------------------------------------------------")
 	print("solution_file must have extansion .py, .c, .cpp or .java")
+	print("Java programmer must write the packege name as user.mail_id[till @].q[qustion_no]")
+	print("Java programmer must use class name starting with capital latter only")
+	print("C++ programmer must use int main() with return 0")
 	print("------------------------------------------------------")
 elif sys.argv[1] == 'register':
 	if len(sys.argv) != 5:
@@ -112,11 +119,6 @@ elif sys.argv[1] == 'status':
 		exit()
 	c = Client("127.0.0.1", PORT)
 	c.status(sys.argv[2], sys.argv[3])
-
-
-elif sys.argv[1] == 'compile':
-	if len(sys.argv) != 4:
-		print('Wrong Command type "codathon.py help" to get help.')
-		exit()
+elif sys.argv[1] == 'reset':
 	c = Client("127.0.0.1", PORT)
-	c.compile(sys.argv[2], sys.argv[3])
+	c.reset()

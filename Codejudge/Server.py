@@ -63,7 +63,7 @@ class Compiler:
 			return self.__compile_python(filename, problam_num)
 
 	def __compile_c(self, filename, problam_num):
-		compile_error = os.system("gcc "+ filename + ' -o "'+ filename[0:-1] +'.exe"')
+		compile_error = os.system('gcc "'+ filename + '" -o "'+ filename +'.exe"')
 		if compile_error == 1:
 			self.compile_error = True
 			self.error_text = "Unable to compile"
@@ -78,7 +78,7 @@ class Compiler:
 		h1.close()
 		h2.close()
 
-		p = Popen(filename[0:-1]+'.exe"', stdin=PIPE, stdout=PIPE, stderr=PIPE)
+		p = Popen('"'+ filename +'.exe"', stdin=PIPE, stdout=PIPE, stderr=PIPE)
 		stdout_data = p.communicate(input=inputs.encode())[0]
 
 		a = outputs.split('\n')
@@ -90,7 +90,7 @@ class Compiler:
 		return (matchCount/allCount)*100
 
 	def __compile_cpp(self, filename, problam_num):
-		compile_error = os.system("g++ "+ filename + ' -o "'+ filename[0:-1] +'.exe"')
+		compile_error = os.system('g++ "'+ filename + ' -o "'+ filename +'.exe"')
 		if compile_error == 1:
 			self.compile_error = True
 			self.error_text = "Unable to compile"
@@ -105,7 +105,7 @@ class Compiler:
 		h1.close()
 		h2.close()
 
-		p = Popen(filename[0:-1]+'.exe"', stdin=PIPE, stdout=PIPE, stderr=PIPE)
+		p = Popen('"'+filename+'.exe"', stdin=PIPE, stdout=PIPE, stderr=PIPE)
 		stdout_data = p.communicate(input=inputs.encode())[0]
 
 		a = outputs.split('\n')
@@ -118,7 +118,7 @@ class Compiler:
 
 
 	def __compile_java(self, filename, problam_num):
-		compile_error = os.system("javac "+ filename + ' -o "'+ filename[0:-1] +'.exe"')
+		compile_error = os.system('javac "'+ filename+'"')
 		if compile_error == 1:
 			self.compile_error = True
 			self.error_text = "Unable to compile"
@@ -133,12 +133,12 @@ class Compiler:
 		h1.close()
 		h2.close()
 
-		p = Popen(filename[0:-1]+'.exe"', stdin=PIPE, stdout=PIPE, stderr=PIPE)
+		print('java "'+filename[0:-5]+'"')
+		p = Popen('java "'+filename[0:-5]+'"', stdin=PIPE, stdout=PIPE, stderr=PIPE)
 		stdout_data = p.communicate(input=inputs.encode())[0]
-
 		a = outputs.split('\n')
-		b = stdout_data.decode('utf-8').strip().split('\r\n')
-
+		b = stdout_data.decode('utf-8').strip().split('\n')
+		print(b)
 		allCount = len(a)
 		matchCount = [i == j for i, j in zip(a, b)].count(True)
 
@@ -155,10 +155,8 @@ class Compiler:
 		h1.close()
 		h2.close()
 
-		print(filename)
-		stdout_data= str(os.system(filename)).encode()
-		# p = Popen(filename, stdin=PIPE, stdout=PIPE, stderr=PIPE)
-		# stdout_data = p.communicate(input=inputs.encode())[0]
+		p = Popen('python "'+filename+'"', stdin=PIPE, stdout=PIPE, stderr=PIPE)
+		stdout_data = p.communicate(input=inputs.encode())[0]
 
 		a = outputs.split('\n')
 		b = stdout_data.decode('utf-8').strip().split('\r\n')
@@ -175,9 +173,6 @@ class Compiler:
 		else:
 			return False
 
-c = Compiler('py')
-c.compile('"user/a@a/2/abc.py"', 1)
-exit()
 d = Database()
 d.updateScore('kr.prashsant94@gmail.com', '1', '35.5', '35105')
 d.getScore('6DW7DF8U', 'EMAIL','kr.prashsant94@gmail.com')
@@ -212,24 +207,30 @@ while True:
 			print ('Recived : '+ str(addr)+" --> "+str(command[0]))
 			if command[0] == 'register':
 				password = d.insert(command[1], command[2], command[3])
-				if not os.path.exists("user/"+command[1]):
-					os.makedirs("user/"+command[1])
+				dir_location = "user/"+command[1].split('@')[0]
+				if not os.path.exists(dir_location):
+					os.makedirs(dir_location)
 				c.send(password.encode())
+			elif command[0] == 'reset':
+				print("Server Closed...")
+				break
 			elif command[0] == 'submit':
-				if not os.path.exists("user/"+command[1]+"/"+command[-3]):
-					os.makedirs("user/"+command[1]+"/"+command[-3])
-				h = open("user/"+command[1]+"/"+command[-3]+"/abc."+command[-1], 'w')
-				h.write(command[-2])
+				file_path = "user/"+command[1].split('@')[0]+"/q"+command[3]
+				if not os.path.exists(file_path):
+					os.makedirs(file_path)
+				h = open(file_path+"/"+command[6], 'w')
+				h.write(command[4])
 				h.close()
-				# @return (float) : % match with real Test cases
-				compiler = Compiler(lang)
-				score = compiler.compile("user/"+command[1]+"/"+command[-3]+"/abc."+command[-1], 'w')
-				lastError = compiler.getLastError()
-				c.send(b'100')
+				lang_comp = Compiler(command[5])
+				score = lang_comp.compile(file_path+'/'+command[6], command[3])
+				print(score)
+				# lastError = compiler.getLastError()
+				c.sendall(score.encode())
+
 			elif command[0] == 'status':
-				c.send(b'Rank : 1358\nScore : 1350\nTime Left : 3 hr 30min 10s')
+				c.sendall(b'Rank : 1358\nScore : 1350\nTime Left : 3 hr 30min 10s')
 			elif command[0] == 'compile':
-				c.send(b'98.55')
+				c.sendall(b'Invalid...')
 		except:
 			filename = 'static/index.html'
 			f = open(filename, 'r')
@@ -245,5 +246,6 @@ while True:
 
 		# Close the connection with the client
 		c.close()
-	except:
+	except Exception as e:
+		print(e)
 		print("Crashed...")
