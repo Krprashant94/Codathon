@@ -4,16 +4,18 @@ break > output.txt
 set ad=%cd%
 javac %1/%2 2> com.txt
 call :filesize "com.txt"
-if %size%==0 (
-cd %1
-java A < %ad%/inp.txt > %ad%/output.txt
-cd..
-cd..
-cd..
-fc output.txt outputreal.txt > res.txt
-) else type com.txt
-exit
+if %size%==0 call :op %1 "%ad%" %3 
+if not %size%==0 type com.txt
+goto :eof
 
 :filesize
-	set size=%~z1
-	exit /b 0	
+	set size=%~z1	
+	goto :eof
+
+:op
+	cd %1
+	java %3 < %2/inp.txt > %2/output.txt
+	cd %2
+	fc output.txt outputreal.txt > res.txt
+	type output.txt
+	goto :eof
