@@ -5,7 +5,6 @@ import java.io.ObjectInputStream.GetField;
 
 public class CodeJudge {
 	public static void main(String[]args)throws Exception{
-		System.out.println("OK");
 		String pathname = args[0];
 		String filename = args[1];
 		String ext = args[2];

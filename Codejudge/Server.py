@@ -40,33 +40,30 @@ class Database:
 
 
 
-class compiler:
-	"""docstring for compiler"""
+
+class Compiler:
+	# ""docstring for compiler""
 	def __init__(self, lang):
-		super(compiler, self).__init__()
-		if lang == 'c':
-			self.batch_file_name = 'c_batch_file.bat'
-		elif lang == 'cpp':
-			self.batch_file_name = 'cpp_batch_file.bat'
-		elif lang == 'java':
-			self.batch_file_name = 'java_batch_file.bat'
-		elif lang == 'py':
-			self.batch_file_name = 'py_batch_file.bat'
+		self.language = lang
+
 		self.error = False
 		self.error_text = "None"
 		self.compile_percentage = 0
+
 	def compile(self, filename):
-		data = exec(self.batch_file_name)
-		# process the data
-		self.error = true?false
-		self.error_text = 'None'?Text
-		return self.compile_percentage
+		if self.language == "c" or self.language == "C":
+			self.__compile_c(filename)
+	def __compile_c(self, filename):
+		compile_error = os.system("gcc "+filename+ ' -o "'+filename+'.exe"')
+		print(compile_error)
+
 
 	def getLastError(self):
 		return self.error_text
 
-
-		
+c = Compiler('c')
+c.compile('"user/a@a/1/abc.c"')
+exit()
 d = Database()
 d.updateScore('kr.prashsant94@gmail.com', '1', '35.5', '35105')
 d.getScore('6DW7DF8U', 'EMAIL','kr.prashsant94@gmail.com')
@@ -74,10 +71,10 @@ d.getScore('6DW7DF8U', 'EMAIL','kr.prashsant94@gmail.com')
 # Constant
 START_TIME_STAMP = 0
 MAX_SUBMIT_SIZE = 2048 + 50 #50 byte for header data
-port = 12345
+port = 63
 
 # next create a socket object
-s = socket.socket()         
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)         
 print ("Server successfully created")
 
  
@@ -91,35 +88,48 @@ print ("socket is listening")
 # a forever loop until we interrupt it or 
 # an error occurs
 while True:
-	# Establish connection with client.
-	# send a thank you message to the client.
+	try:
+		# Establish connection with client.
+		# send a thank you message to the client.
 
-	c, addr = s.accept()
-	command = eval(c.recv(MAX_SUBMIT_SIZE).decode("utf-8"))
-	print ('Recived : '+ str(addr)+" --> "+str(command[0]))
-	if command[0] == 'register':
-		password = d.insert(command[1], command[2], command[3])
-		if not os.path.exists("user/"+command[1]):
-			os.makedirs("user/"+command[1])
-		c.send(password.encode())
-	if command[0] == 'submit':
-		if not os.path.exists("user/"+command[1]+"/"+command[-3]):
-			os.makedirs("user/"+command[1]+"/"+command[-3])
-		h = open("user/"+command[1]+"/"+command[-3]+"/abc."+command[-1], 'w')
-		h.write(command[-2])
-		h.close()
-		# @return (float) : % match with real Test cases
-		compiler = Compiler(lang)
-		score = compiler.compile("user/"+command[1]+"/"+command[-3]+"/abc."+command[-1], 'w')
-		lastError = compiler.getLastError()
-		c.send(b'100')
-	if command[0] == 'login':
-		c.send(b'True')
-	if command[0] == 'get':
-		c.send(b'question html page')
-	if command[0] == 'status':
-		c.send(b'Rank : 1358\nScore : 1350\nTime Left : 3 hr 30min 10s')
-	if command[0] == 'compile':
-		c.send(b'98.55')
-	# Close the connection with the client
-	c.close()
+		c, addr = s.accept()
+		try:
+			command = eval(c.recv(MAX_SUBMIT_SIZE).decode("utf-8"))
+			print ('Recived : '+ str(addr)+" --> "+str(command[0]))
+			if command[0] == 'register':
+				password = d.insert(command[1], command[2], command[3])
+				if not os.path.exists("user/"+command[1]):
+					os.makedirs("user/"+command[1])
+				c.send(password.encode())
+			elif command[0] == 'submit':
+				if not os.path.exists("user/"+command[1]+"/"+command[-3]):
+					os.makedirs("user/"+command[1]+"/"+command[-3])
+				h = open("user/"+command[1]+"/"+command[-3]+"/abc."+command[-1], 'w')
+				h.write(command[-2])
+				h.close()
+				# @return (float) : % match with real Test cases
+				compiler = Compiler(lang)
+				score = compiler.compile("user/"+command[1]+"/"+command[-3]+"/abc."+command[-1], 'w')
+				lastError = compiler.getLastError()
+				c.send(b'100')
+			elif command[0] == 'status':
+				c.send(b'Rank : 1358\nScore : 1350\nTime Left : 3 hr 30min 10s')
+			elif command[0] == 'compile':
+				c.send(b'98.55')
+		except:
+			filename = 'static/index.html'
+			f = open(filename, 'r')
+			c.sendall(str.encode("HTTP/1.0 200 OK\n",'iso-8859-1'))
+			c.sendall(str.encode('Content-Type: text/html\n', 'iso-8859-1'))
+			c.send(str.encode('\r\n'))
+			# send data per line
+			for l in f.readlines():
+				# print('Sent ', repr(l))
+				c.sendall(str.encode(""+l+"", 'iso-8859-1'))
+			l = f.read(1024)
+			f.close()
+
+		# Close the connection with the client
+		c.close()
+	except:
+		print("Crashed...")
