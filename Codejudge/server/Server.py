@@ -53,7 +53,7 @@ class Database:
 	def __init__(self, ):
 		self.P = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7']
 		self.P_TIME = ['P1_TIME', 'P2_TIME', 'P3_TIME', 'P4_TIME', 'P5_TIME', 'P6_TIME', 'P7_TIME']
-		self.column = ['NAME', 'EMAIL', 'PASSWORD', 'ROLL', 'P1', 'P1_TIME', 'P2', 'P2_TIME', 'P3', 'P3_TIME', 'P4', 'P4_TIME', 'P5', 'P5_TIME', 'P6', 'P6_TIME', 'P7', 'P7_TIME']
+		self.column = ['NAME', 'EMAIL', 'PASSWORD', 'ROLL', 'P1', 'P1_TIME', 'P2', 'P2_TIME', 'P3', 'P3_TIME', 'P4', 'P4_TIME', 'P5', 'P5_TIME', 'P6', 'P6_TIME', 'P7', 'P7_TIME', 'TLE', 'SIZE']
 		self.conn = sqlite3.connect('user.db')
 
 	def __del__(self):
@@ -89,7 +89,7 @@ class Database:
 		l = []
 		for row in cursor:
 			for i in range(len(self.column)):
-				l.append(self.column[i]+" = "+ row[i])
+				l.append(row[i])
 		return l
 
 
@@ -243,11 +243,16 @@ while True:
 						t1.join()
 					except Exception as e:
 						print(e)
+				else:
+					c.sendall(b'Invalid Login')
 
 			elif command[0] == 'status':
 				if d.login(command[1], command[2]):
 					status = d.getScore('EMAIL','kr.prashsant94@gmail.com')
 					c.sendall(str(status).encode())
+				else:
+					c.sendall(b'Invalid Login')
+
 			elif command[0] == 'compile':
 				c.sendall(b'Invalid...')
 

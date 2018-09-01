@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>{{name}}</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->	
+	<link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/perfect-scrollbar/perfect-scrollbar.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="css/util.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+<!--===============================================================================================-->
+</head>
+<body>
+	
+	<div class="limiter">
+		<div class="container-table100">
+			<div class="wrap-table90">
+				<div class="table100 ver1">
+					<div class="table100-firstcol">
+						<table>
+							<thead>
+								<tr class="row100 head">
+									<th class="cell100 column1">Problem</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="row100 body">
+									<td class="cell100 column1">Problem 1</td>
+								</tr>
+
+								<tr class="row100 body">
+									<td class="cell100 column1">Problem 2</td>
+								</tr>
+
+								<tr class="row100 body">
+									<td class="cell100 column1">Problem 3</td>
+								</tr>
+
+								<tr class="row100 body">
+									<td class="cell100 column1">Problem 4</td>
+								</tr>
+
+								<tr class="row100 body">
+									<td class="cell100 column1">Problem 5</td>
+								</tr>
+
+								<tr class="row100 body">
+									<td class="cell100 column1">Problem 6</td>
+								</tr>
+
+								<tr class="row100 body">
+									<td class="cell100 column1">Problem 7</td>
+								</tr>
+
+								<tr class="row100 body">
+									<td class="cell100 column1">All Total</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					
+					<div class="wrap-table100-nextcols js-pscroll">
+						<div class="table100-nextcols">
+							<table>
+								<thead>
+									<tr class="row100 head">
+										<th class="cell100 column2">Score</th>
+										<th class="cell100 column3">Time Submitted</th>
+										<th class="cell100 column4">Time Score</th>
+										<th class="cell100 column5">Total</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr class="row100 body">
+										<td class="cell100 column2">{{score1}}</td>
+										<td class="cell100 column3">{{time1}}</td>
+										<td class="cell100 column4">{{time_score1}}</td>
+										<td class="cell100 column5">{{total1}}</td>
+									</tr>
+
+									<tr class="row100 body">
+										<td class="cell100 column2">{{score2}}</td>
+										<td class="cell100 column3">{{time2}}</td>
+										<td class="cell100 column4">{{time_score2}}</td>
+										<td class="cell100 column5">{{total2}}</td>
+									</tr>
+
+									<tr class="row100 body">
+										<td class="cell100 column2">{{score3}}</td>
+										<td class="cell100 column3">{{time3}}</td>
+										<td class="cell100 column4">{{time_score3}}</td>
+										<td class="cell100 column5">{{total3}}</td>
+									</tr>
+
+									<tr class="row100 body">
+										<td class="cell100 column2">{{score4}}</td>
+										<td class="cell100 column3">{{time4}}</td>
+										<td class="cell100 column4">{{time_score4}}</td>
+										<td class="cell100 column5">{{total4}}</td>
+									</tr>
+
+									<tr class="row100 body">
+										<td class="cell100 column2">{{score5}}</td>
+										<td class="cell100 column3">{{time5}}</td>
+										<td class="cell100 column4">{{time_score5}}</td>
+										<td class="cell100 column5">{{total5}}</td>
+									</tr>
+
+									<tr class="row100 body">
+										<td class="cell100 column2">{{score6}}</td>
+										<td class="cell100 column3">{{time6}}</td>
+										<td class="cell100 column4">{{time_score6}}</td>
+										<td class="cell100 column5">{{total6}}</td>
+									</tr>
+
+									<tr class="row100 body">
+										<td class="cell100 column2">{{score7}}</td>
+										<td class="cell100 column3">{{time7}}</td>
+										<td class="cell100 column4">{{time_score7}}</td>
+										<td class="cell100 column5">{{total7}}</td>
+									</tr>
+									<tr class="row100 body">
+										<td class="cell100 column2"></td>
+										<td class="cell100 column3"></td>
+										<td class="cell100 column4"></td>
+										<td class="cell100 column5">{{all_total}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+<!--===============================================================================================-->	
+	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/bootstrap/js/popper.js"></script>
+	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/select2/select2.min.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+	<script>
+		$('.js-pscroll').each(function(){
+			var ps = new PerfectScrollbar(this);
+
+			$(window).on('resize', function(){
+				ps.update();
+			})
+
+			$(this).on('ps-x-reach-start', function(){
+				$(this).parent().find('.table100-firstcol').removeClass('shadow-table100-firstcol');
+			});
+
+			$(this).on('ps-scroll-x', function(){
+				$(this).parent().find('.table100-firstcol').addClass('shadow-table100-firstcol');
+			});
+
+		});
+
+		
+		
+		
+	</script>
+<!--===============================================================================================-->
+	<script src="js/main.js"></script>
+
+</body>
+</html>

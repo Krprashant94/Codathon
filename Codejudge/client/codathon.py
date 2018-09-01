@@ -52,7 +52,49 @@ class Client:
 
 	def status(self, email, password):
 		self.server.sendall(json.dumps(["status", email, password]).encode())
-		print(self.server.recv(1024).decode("utf-8"))
+		res = eval(self.server.recv(1024).decode("utf-8"))
+		print(res)
+		h = open('./score/index.html', 'r')
+		html = h.read()
+
+		html = html.replace("{{name}}", res[0])
+		html = html.replace("{{score1}}", res[4])
+		html = html.replace("{{time1}}", res[5])
+		html = html.replace("{{score2}}", res[6])
+		html = html.replace("{{time2}}", res[7])
+		html = html.replace("{{score3}}", res[8])
+		html = html.replace("{{time3}}", res[9])
+		html = html.replace("{{score4}}", res[10])
+		html = html.replace("{{time4}}", res[11])
+		html = html.replace("{{score5}}", res[12])
+		html = html.replace("{{time5}}", res[13])
+		html = html.replace("{{score6}}", res[14])
+		html = html.replace("{{time6}}", res[15])
+		html = html.replace("{{score7}}", res[16])
+		html = html.replace("{{time7}}", res[17])
+		
+		html = html.replace("{{time_score1}}", str(0.2*float(res[5])))
+		html = html.replace("{{total1}}", str(float(res[4]) + 0.2*float(res[5])))
+		html = html.replace("{{time_score2}}", str(0.2*float(res[7])))
+		html = html.replace("{{total2}}", str(float(res[6]) + 0.2*float(res[7])))
+		html = html.replace("{{time_score3}}", str(0.4*float(res[9])))
+		html = html.replace("{{total3}}", str(float(res[8]) + 0.4*float(res[9])))
+		html = html.replace("{{time_score4}}", str(0.4*float(res[11])))
+		html = html.replace("{{total4}}", str(float(res[10]) + 0.4*float(res[11])))
+		html = html.replace("{{time_score5}}", str(0.4*float(res[13])))
+		html = html.replace("{{total5}}", str(float(res[12]) + 0.4*float(res[13])))
+		html = html.replace("{{time_score6}}", str(0.6*float(res[15])))
+		html = html.replace("{{total6}}", str(float(res[14]) + 0.6*float(res[15])))
+		html = html.replace("{{time_score7}}", str(0.6*float(res[17])))
+		html = html.replace("{{total7}}", str(float(res[16]) + 0.6*float(res[17])))
+
+		html = html.replace("{{all_total}}", str(float(res[4]) + 0.2*float(res[5]) + float(res[6]) + 0.2*float(res[7]) + float(res[8]) + 0.4*float(res[9]) + float(res[10]) + 0.4*float(res[11]) + float(res[12]) + 0.4*float(res[13]) + float(res[14]) + 0.6*float(res[15]) + float(res[16]) + 0.6*float(res[17])))
+
+		h.close()
+		h = open('./score/scorebord.html', 'w')
+		h.write(html)
+		h.close()
+		os.system("start ./score/scorebord.html")
 
 	def compile(self, ques, filename):
 		"""Not in use"""
@@ -120,6 +162,7 @@ elif sys.argv[1] == 'status':
 		exit()
 	c = Client("127.0.0.1", PORT)
 	c.status(sys.argv[2], sys.argv[3])
+
 elif sys.argv[1] == 'reset':
 	c = Client("127.0.0.1", PORT)
 	c.reset()
