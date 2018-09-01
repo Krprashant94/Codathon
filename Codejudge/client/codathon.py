@@ -5,6 +5,15 @@ import os
 import time
 
 PORT = 63
+if os.path.isfile('ip'):
+	f=open('ip', 'r')
+	IP = f.read()
+	f.close()
+else:
+	f=open('ip', 'w')
+	IP = input('Enter Server IP Address : ')
+	f.write(IP)
+	f.close()
 
 class Client:
 	"""Client Class"""
@@ -32,7 +41,11 @@ class Client:
 		self.roll = roll
 		self.server.sendall(json.dumps(["register", email, name, roll]).encode())
 		self.password = self.server.recv(1024)
-		print("Your Password is : "+self.password.decode("utf-8"))
+		self.password = self.password.decode("utf-8")
+		if self.password != 'Fail':
+			print("Your Password is : "+self.password)
+		else:
+			print("Already Register !!!")
 
 	def userLogin(self, user, password):
 		self.server.sendall(json.dumps(["login", user, password]).encode())
@@ -41,7 +54,7 @@ class Client:
 			self.login = True
 
 	def get(self):
-		os.system("start http://localhost:"+str(PORT))
+		os.system("start http://"+IP+":"+str(PORT))
 
 	def submitAnswer(self, email, password, problem_no, filename):
 		file = open(filename, 'r') 
@@ -133,25 +146,25 @@ elif sys.argv[1] == 'register':
 	if len(sys.argv) != 5:
 		print('Wrong Command type "codathon.py help" to get help.')
 		exit()
-	c = Client("127.0.0.1", PORT)
+	c = Client(IP, PORT)
 	c.register(sys.argv[2], sys.argv[3], sys.argv[4])
 
 elif sys.argv[1] == 'submit':
 	if len(sys.argv) != 6:
 		print('Wrong Command type "codathon.py help" to get help.')
 		exit()
-	c = Client("127.0.0.1", PORT)
+	c = Client(IP, PORT)
 	c.submitAnswer(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
 	del c
 	time.sleep(2)
-	c = Client("127.0.0.1", PORT)
+	c = Client(IP, PORT)
 	c.status(sys.argv[2], sys.argv[3])
 
 elif sys.argv[1] == 'login':
 	if len(sys.argv) != 4:
 		print('Wrong Command type "codathon.py help" to get help.')
 		exit()
-	c = Client("127.0.0.1", PORT)
+	c = Client(IP, PORT)
 	c.userLogin(sys.argv[2], sys.argv[3])
 
 elif sys.argv[1] == 'get':
@@ -165,9 +178,9 @@ elif sys.argv[1] == 'status':
 	if len(sys.argv) != 4:
 		print('Wrong Command type "codathon.py help" to get help.')
 		exit()
-	c = Client("127.0.0.1", PORT)
+	c = Client(IP, PORT)
 	c.status(sys.argv[2], sys.argv[3])
 
 elif sys.argv[1] == 'reset':
-	c = Client("127.0.0.1", PORT)
+	c = Client(IP, PORT)
 	c.reset()

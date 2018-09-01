@@ -9,6 +9,13 @@ import subprocess as sub
 import threading
 import time
 
+
+# Constant
+START_TIME_STAMP = int(time.time()) + 7200 #TODO
+MAX_SUBMIT_SIZE = 2048 + 50 #50 byte for header data
+PORT = 63
+
+
 class TLE(threading.Thread):
 	def __init__(self, cmd, problam_num, timeout, email):
 		threading.Thread.__init__(self)
@@ -191,18 +198,13 @@ d = Database()
 # kr.prashsant94@gmail.com
 # print(d.getScore('EMAIL', 'a@a'))
 
-# Constant
-START_TIME_STAMP = 1535803758 + 7200 #int(time.time())
-MAX_SUBMIT_SIZE = 2048 + 50 #50 byte for header data
-port = 63
-
 # next create a socket object
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)         
 print ("Server successfully created. AT : "+str(START_TIME_STAMP))
 
  
-s.bind(('', port))
-print ("socket binded to %s" %(port))
+s.bind(('', PORT))
+print ("Server is rinning on %s" %(PORT))
 
 # put the socket into listening mode
 s.listen(5)     
