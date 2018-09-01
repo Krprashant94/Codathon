@@ -2,6 +2,7 @@ import socket
 import json
 import sys
 import os
+import time
 
 PORT = 63
 
@@ -50,10 +51,10 @@ class Client:
 		self.server.sendall(json.dumps(["submit", email, password, problem_no, solution, lang, filename]).encode())
 		print(self.server.recv(1024).decode("utf-8"))
 
+
 	def status(self, email, password):
 		self.server.sendall(json.dumps(["status", email, password]).encode())
 		res = eval(self.server.recv(1024).decode("utf-8"))
-		print(res)
 		h = open('./score/index.html', 'r')
 		html = h.read()
 
@@ -141,6 +142,10 @@ elif sys.argv[1] == 'submit':
 		exit()
 	c = Client("127.0.0.1", PORT)
 	c.submitAnswer(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
+	del c
+	time.sleep(2)
+	c = Client("127.0.0.1", PORT)
+	c.status(sys.argv[2], sys.argv[3])
 
 elif sys.argv[1] == 'login':
 	if len(sys.argv) != 4:

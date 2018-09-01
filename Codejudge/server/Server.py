@@ -7,6 +7,7 @@ import string
 import socket
 import subprocess as sub
 import threading
+import time
 
 class TLE(threading.Thread):
 	def __init__(self, cmd, problam_num, timeout, email):
@@ -35,8 +36,11 @@ class TLE(threading.Thread):
 		allCount = len(a)
 		matchCount = [i == j for i, j in zip(a, b)].count(True)
 		match_case = 100*matchCount/allCount
+
+		timeScore = str(int(START_TIME_STAMP - int(time.time()))) if match_case != 0 else '0'
+
 		db = Database()
-		db.updateScore(self.email, self.problam_num, str(match_case), "10")
+		db.updateScore(self.email, self.problam_num, str(match_case), timeScore)
 
 
 	def Run(self):
@@ -123,7 +127,7 @@ class Compiler:
 			
 			# Run
 			a = TLE('"'+ filename.split(".")[0] +'.exe"', problam_num, 2, self.email).Run()
-			return 'codathon status <email_id> <password>'
+			return 'Submitted'
 
 		except Exception as e:
 			return "Execution Error..."
@@ -138,7 +142,7 @@ class Compiler:
 			
 			# Run 
 			a = TLE('"' + filename.split(".")[0] + '.exe"', problam_num, 2, self.email).Run()
-			return 'codathon status <email_id> <password>'
+			return 'Submitted'
 
 		except Exception as e:
 			return "Execution Error..."
@@ -153,7 +157,7 @@ class Compiler:
 			
 			# Run 
 			a = TLE('java "'+filename.split(".")[0]+'"', problam_num, 2, self.email).Run()
-			return 'codathon status <email_id> <password>'
+			return 'Submitted'
 
 		except Exception as e:
 			return "Execution Error..."
@@ -162,7 +166,7 @@ class Compiler:
 	def __compile_python(self, filename, problam_num):		
 		try:
 			a = TLE('python "'+filename+'"', problam_num, 2, self.email).Run()
-			return 'codathon status <email_id> <password>'
+			return 'Submitted'
 		except Exception as e:
 		 	return "Execution Error..."
 
@@ -185,16 +189,16 @@ def executer(command, c):
 d = Database()
 # XMCDK30WBJ
 # kr.prashsant94@gmail.com
-
+# print(d.getScore('EMAIL', 'a@a'))
 
 # Constant
-START_TIME_STAMP = 0
+START_TIME_STAMP = 1535803758 + 7200 #int(time.time())
 MAX_SUBMIT_SIZE = 2048 + 50 #50 byte for header data
 port = 63
 
 # next create a socket object
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)         
-print ("Server successfully created")
+print ("Server successfully created. AT : "+str(START_TIME_STAMP))
 
  
 s.bind(('', port))
@@ -248,7 +252,7 @@ while True:
 
 			elif command[0] == 'status':
 				if d.login(command[1], command[2]):
-					status = d.getScore('EMAIL','kr.prashsant94@gmail.com')
+					status = d.getScore('EMAIL',command[1])
 					c.sendall(str(status).encode())
 				else:
 					c.sendall(b'Invalid Login')
