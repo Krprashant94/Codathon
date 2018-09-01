@@ -18,5 +18,7 @@ conn.execute('''CREATE TABLE USER
 	P6            TEXT     NOT NULL,
 	P6_TIME       TEXT     NOT NULL,
 	P7            TEXT     NOT NULL,
-	P7_TIME       TEXT     NOT NULL);''')
+	P7_TIME       TEXT     NOT NULL,
+	TLE           TEXT     NOT NULL,
+	SIZE          TEXT     NOT NULL);''')
 conn.close()
