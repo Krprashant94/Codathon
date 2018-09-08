@@ -96,13 +96,28 @@ class Database:
 		self.conn.commit()
 
 	def getScore(self, where='1', condition='1'):
-		cursor = self.conn.execute('SELECT * from USER WHERE '+where+' = "'+condition+'"' )
-		l = []
+		if where == '1':
+			query = 'SELECT * from USER WHERE 1'
+		else:
+			query = 'SELECT * from USER WHERE '+where+' = "'+condition+'"'  
+		cursor = self.conn.execute(query)
+		user = []
 		for row in cursor:
+			r = []
 			for i in range(len(self.column)):
-				l.append(row[i])
-		return l
-
+				r.append(row[i])
+			user.append(r[:])
+		return user
+	def leaderBord(self):
+		query = 'SELECT ROLL, NAME from USER WHERE 1'
+		cursor = self.conn.execute(query)
+		user = []
+		for row in cursor:
+			r = []
+			for i in range(1):
+				r.append(row[i])
+			user.append(r[:])
+		print(user)
 
 class Compiler:
 	# ""docstring for compiler""
@@ -194,6 +209,7 @@ def executer(command, c):
 		c.sendall(str(lastError).encode())
 
 d = Database()
+# d.leaderBord()
 # XMCDK30WBJ
 # kr.prashsant94@gmail.com
 # print(d.getScore('EMAIL', 'a@a'))
@@ -272,7 +288,7 @@ while True:
 			for l in f.readlines():
 				# print('Sent ', repr(l))
 				c.sendall(str.encode(""+l+"", 'iso-8859-1'))
-			l = f.read(1024)
+			l = f.read(4086)
 			f.close()
 
 		# Close the connection with the client
